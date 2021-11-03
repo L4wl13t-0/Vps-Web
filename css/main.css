@@ -1,0 +1,56 @@
+@font-face {
+    font-family: "Glitch";
+    src: url("../font/Glitch.otf");
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+.title {
+    font-family: "Glitch";
+    font-size: 50px;
+    text-align: center;
+}
+
+.navbar, ul, li, ul, li, a {
+    text-decoration: none;
+    list-style: none;
+    color: whitesmoke;
+    padding-top: 1px;
+}
+
+.navbar, ul, li, ul, li, a:hover {
+    color: magenta;
+}
+
+.navbar, ul, li {
+    color: magenta;
+}
+
+.navbar {
+    border: 2px solid white;
+    width: 200px;
+    float: left;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.main {
+    border: 2px solid white;
+    padding-left: 30px;
+    padding-bottom: 30px;
+    padding-right: 30px;
+    margin-left: 230px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.title-main {
+    color: magenta;
+}
+
+.shutdown {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+}
