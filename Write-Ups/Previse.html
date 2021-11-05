@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previse</title>
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <div class="title">
+        <H1>Lawliet</H1>
+    </div>
+    <div class="navbar">
+        <ul>
+            <li class="list-menu">Menu</li>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../images.html">Images</a></li>
+                </ul>
+            <li class="list-menu">Write-Ups</li>
+                <ul>
+                    <li><a href="Previse.html">Previse</a></li>
+                    <li><a href="#">Second</a></li>
+                </ul>
+        </ul>
+    </div>
+    <div class="main">
+        <h1 class="title-main">Previse</h1>
+		<div class="points">
+			<div class="ports">
+				<h3 class="pointitle">1. Port scan:</h3>
+				<ul>
+					<li>80 - HTTP</li>
+					<li>22 - SSH</li>
+				</ul>
+				<h3 class="pointitle">2. Web discovery:</h3>
+				<ul>
+                    <li>- /accounts.php</li>
+                    <li>- /config.php</li>
+                    <li>- /css</li>
+                    <li>- /download.php</li>
+                    <li>- /favicon.ico</li>
+                    <li>- /files.php</li>
+                    <li>- /footer.php</li>
+                    <li>- /header.php</li>
+                    <li>- /index.php</li>
+                    <li>- /js</li>
+                    <li>- /login.php</li>
+                    <li>- /logs.php</li>
+                    <li>- /logout.php</li>
+                    <li>- /nav.php</li>
+                    <li>- /server-status</li>
+                    <li>- /status</li>
+				</ul>
+                <h3 class="pointitle">3. Create account:</h3>
+                The first thing I did was enter page by page using curl to list its content, and <code>/accounts.php</code> allowed us to bypass the login, with this what I did was go to BurpSuite and intercepting the request I sent it to the Repeter, now I could see the content clearer.
+                <br><br>
+                <img src="_resources/b967eb0465b54af48ba64adb3f4f9105.png" alt="">
+                <br><br>
+                The next thing was to create an account, which is as simple as reading the raw and looking for the identifying name of each box and making the request with them.
+                <br><br>
+                <div class="codeb">
+                    POST /accounts.php HTTP/1.1<br>
+                    Host: 10.10.11.104<br>
+                    Upgrade-Insecure-Requests: 1<br>
+                    User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36<br>
+                    Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9<br>
+                    Accept-Encoding: gzip, deflate<br>
+                    Content-Type: application/x-www-form-urlencoded<br>
+                    Accept-Language: es-419,es;q=0.9,en;q=0.8<br>
+                    Cookie: PHPSESSID=kmm4nm7orv4us2s710inilei1d<br>
+                    Connection: close<br>
+                    Content-Length: 51
+                </div>
+                <br><br>
+                <img src="_resources/36c5db0c6b144c019b6b2bbfec35f027.png" alt="">
+                <h3 class="pointitle">4. Backup:</h3>
+                Once the session is started we can see the directory <code>files.php</code> where in my case shells possibly from other people appear, without paying attention to that, we download the backup that lists the page, and once unzipped we can see two very striking files, <code>config.php</code> and <code>logs.php</code>.
+                <h4>- config.php</h4>
+                <div class="codeb">
+                    function connectDB(){<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;$host = 'localhost';<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;$user = 'root';<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;$passwd = 'mySQL_p@ssw0rd!:)';<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;$db = 'previse';<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;$mycon = new mysqli($host, $user, $passwd, $db);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;return $mycon;<br>
+                    }
+                </div>
+                <h4>- logs.php</h4>
+                <div class="codeb">
+                    /////////////////////////////////////////////////////////////////////////////////////<br>
+                    //I tried really hard to parse the log delims in PHP, but python was SO MUCH EASIER//<br>
+                    /////////////////////////////////////////////////////////////////////////////////////<br><br>
+                    
+                    $output = exec("/usr/bin/python /opt/scripts/log_process.py {$_POST['delim']}");<br>
+                    echo $output;<br>
+                </div>
+                <br>
+                Here we find database credentials and we can see that a POST request uses <code>exec</code> so we can execute commands on the system.
+			</div>
+            <h3 class="pointitle">5. Acces:</h3>
+            Reading the backup code we can find that the directory to use for the logs file is <code>/file_logs.php</code>, but since we cannot write our own command from the browser, let's go back to burpsuite and intercept.
+            <br><br>
+            <img src="_resources/512c9f6a86fd4ee6b02e0f4a6f975522.png" alt="">
+            <br><br>
+            We put a semicolon and we send a bash to our machine, and in this way we obtain access.
+            <br><br>
+            <img src="_resources/3c95bc318df84afb8a6a6ac68de00c64.png" alt="">
+            <br><br>
+            We connect to the database with the credentials we got before and list.
+            <br><br>
+            <img src="_resources/1fcc48dd065d4515964e673908a2192f.png" alt="">
+            <img src="_resources/d7acc9418f8145fdbc6ddac0e7123520.png" alt="">
+            <br><br>
+            We have the hash of the user m4lwhere.
+            <h3 class="poin">Privilege escalation:</h3>tile
+            What I did was add the hash in a txt and using john to decrypt it:
+            <br><br>
+            <img src="_resources/3bb0c914404f44149bb4e24c8de4b0b3.png" alt="">
+            <br><br>
+            We connect by ssh and we are inside.
+            <br><br>
+            <img src="_resources/bf58964ef2d14ff78c8cbed9fee960db.png" alt="">
+            <br><br>
+            Using <code>sudo -l</code> we find the following script; and to exploit it we must:
+            <br><br>
+            <img src="_resources/acb79942fa7245938e4d4b0a69832f7b.png" alt="">
+            <img src="_resources/41ab999476c048cfbc226ffef4fac9e2.png" alt="">
+            <br><br>
+            In the script we can see that it executes gzip, but not absolutely, so we can change the PATH and execute our own gzip.
+            <br><br>
+            <img src="_resources/d27ea91f07de4a06b4ee30236b19b7cc.png" alt="">
+            <br><br>
+            <div class="codeb">
+                user: 9cadfd7009ccd4d256cbcd29ede91568<br>
+                root: 1c0f9daf41e23c326365ddcca65d8fac
+            </div>
+		</div>
+    </div>
+    <div class="shutdown">
+        <a href="https://www.google.com/"><img src="../images/shutdown.png" alt="shutdown" width="30" height="30"></a>
+    </div>
+</body>
+</html>

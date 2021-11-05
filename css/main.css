@@ -29,6 +29,10 @@ body {
     color: magenta;
 }
 
+.list-menu {
+    color: springgreen;
+}
+
 .navbar {
     border: 2px solid white;
     width: 200px;
@@ -45,8 +49,33 @@ body {
     font-family: 'Courier New', Courier, monospace;
 }
 
+.main, li {
+    color: white;
+}
+
 .title-main {
     color: magenta;
+}
+
+.pointitle {
+    color: springgreen;
+}
+
+img {
+    width: 100%;
+}
+
+.codeb {
+    background-color: rgb(58, 58, 58);
+    border-radius: 3px;
+    word-wrap: break-word;
+    padding: 3px;
+}
+
+code {
+    background-color: rgb(58, 58, 58);
+    border-radius: 3px;
+    padding: 3px;
 }
 
 .shutdown {
